@@ -1,13 +1,16 @@
 const initialReducers = {
   contacts: [],
   loading: false,
-  error: null
+  error: null,
+  statusEdit: '',
+  statusDelete: '',
+  statusPost: ''
 };
 
 export default function contactReducers (state = initialReducers, action) {
   switch (action.type) {
     case "SET_CONTACTS":
-      return {...state, contact: action.payload};
+      return {...state, contacts: action.payload};
     case "ADD_CONTACT":
       return {...state, contacts: [...state.contacts].push(payload)};
     case "EDIT_CONTACT":
@@ -21,6 +24,12 @@ export default function contactReducers (state = initialReducers, action) {
       return {...state, loading: action.payload};
     case "SET_ERROR":
       return {...state, error: action.payload};
+    case "SET_STATUS_EDIT":
+      return {...state, statusEdit: action.payload};
+    case "SET_STATUS_DELETE":
+      return {...state, statusDelete: action.payload};
+    case "SET_STATUS_POST":
+      return {...state, statusPost: action.payload};
     default:
       return state;
   }

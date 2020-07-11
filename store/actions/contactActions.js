@@ -9,24 +9,14 @@ const setContacts = (contacts) => {
   };
 };
 
-const addContact = (contact) => {
-  return {
-    type: "ADD_CONTACT",
-    payload: contact
-  };
-};
-
-const editContact = (id, data) => {
-  return {
-    type: "EDIT_CONTACT",
-    payload: { id, data }
-  };
-};
-
-const deleteContact = (id) => {
-  return {
-    type: "DELETE_CONTACT",
-    payload: { id }
+const setStatus = (type, payload) => {
+  switch(type) {
+    case "del":
+      return {type: "SET_STATUS_DELETE", payload};
+    case "edit":
+      return {type: "SET_STATUS_EDIT", payload};
+    default:
+      return {type: "SET_STATUS_POST", payload}
   }
 }
 
@@ -52,10 +42,10 @@ const get = () => {
       url
     })
       .then(({ data }) => {
-        dispatch(setContacts(data));
+        dispatch(setContacts(data.data));
       })
-      .catch(error => {
-        dispatch(setError(error));
+      .catch(err => {
+        dispatch(setError(err.response.data.message));
       })
       .finally(_ => {
         dispatch(setLoading(false));
@@ -64,6 +54,7 @@ const get = () => {
 };
 
 const post = (data) => {
+  console.log(data);
   return (dispatch) => {
     dispatch(setLoading(true));
     axios({
@@ -71,11 +62,15 @@ const post = (data) => {
       url,
       data
     })
-      .then(({ data }) => {
-        dispatch(addContact(data));
+      .then(({data}) => {
+        console.log('success')
+        dispatch(setStatus('post', data.message))
+        dispatch(get());
       })
       .catch(err => {
-        dispatch(setError(err));
+        console.log('error')
+        dispatch(setStatus('post', err.response.data.message))
+        dispatch(setError(err.response.data.message));
       })
       .finally(_ => {
         dispatch(setLoading(false));
@@ -91,11 +86,13 @@ const put = (id, data) => {
       url: `${url}/${id}`,
       data
     })
-      .then(_ => {
-        dispatch(editContact(id, data));
+      .then(({data}) => {
+        dispatch(setStatus("edit", data.message))
+        dispatch(get());
       })
       .catch(err => {
-        dispatch(setError(err));
+        dispatch(setStatus("edit", err.response.data.message))
+        dispatch(setError(err.response.data.message));
       })
       .finally(_ => {
         dispatch(setLoading(false));
@@ -104,6 +101,7 @@ const put = (id, data) => {
 };
 
 const del = (id) => {
+  console.log(id)
   return (dispatch) => {
     dispatch(setLoading(true));
     axios({
@@ -111,10 +109,14 @@ const del = (id) => {
       url: `${url}/${id}`
     })
       .then(({ data }) => {
-        dispatch(deleteContact(id))
+        console.log("success")
+        dispatch(get());
+        dispatch(setStatus("del", data.message))
       })
       .catch(err => {
-        dispatch(setError(err));
+        console.log("del", err.response.data.message)
+        dispatch(setStatus("del", err.response.data.message))
+        dispatch(setError(err.response.data.message));
       })
       .finally(_ => {
         dispatch(setLoading(false));
@@ -127,5 +129,6 @@ export default {
   get,
   post,
   put,
-  del
+  del,
+  setStatus
 }
