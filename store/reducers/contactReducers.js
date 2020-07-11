@@ -4,7 +4,8 @@ const initialReducers = {
   error: null,
   statusEdit: '',
   statusDelete: '',
-  statusPost: ''
+  statusPost: '',
+  idCard: ''
 };
 
 export default function contactReducers (state = initialReducers, action) {
@@ -30,6 +31,8 @@ export default function contactReducers (state = initialReducers, action) {
       return {...state, statusDelete: action.payload};
     case "SET_STATUS_POST":
       return {...state, statusPost: action.payload};
+    case "SET_ID_CARD":
+      return {...state, idCard: action.payload};
     default:
       return state;
   }

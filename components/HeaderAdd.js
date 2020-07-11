@@ -13,7 +13,7 @@ export default function Header ({title}) {
         <TouchableOpacity
           onPress={() => navigation.navigate("Contact")}
         >
-          <Icon name="ios-backspace" size={30}/>
+          <Icon name="ios-arrow-back" size={30}/>
         </TouchableOpacity>
       </View>
 

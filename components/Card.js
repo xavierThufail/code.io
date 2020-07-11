@@ -2,18 +2,18 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from "react-native";
 import Icon from "./Icon";
-import { useNavigation } from "@react-navigation/native"
 import allAction from "../store/actions";
 
 export default function Card ({data}) {
-  const navigation = useNavigation();
   const status = useSelector(state => state.contact.statusEdit);
   const loading = useSelector(state => state.contact.loading);
+  const idCard = useSelector(state => state.contact.idCard);
   const dispatch = useDispatch();
 
-  const [showAction, setShowAction] = React.useState(false)
+  const [showAction, setShowAction] = React.useState(false);
   const [edit, setEdit] = React.useState(false);
-  const [display, setDisplay] =React.useState('none')
+  const [display, setDisplay] =React.useState('none');
+  const [detail, setDetail] = React.useState(false);
   const [bottom, setBottom] = React.useState(0);
   const [firstName, setFirstName] = React.useState(data.firstName);
   const [lastName, setLastName] = React.useState(data.lastName);
@@ -23,7 +23,7 @@ export default function Card ({data}) {
   const handleEdit = () => {
     const contactEdit = {firstName, lastName, age: Number(age), photo: data.photo ? data.photo : "N/A"};
     const id = data.id
-    dispatch(allAction.contact.put(data.id, contactEdit));
+    dispatch(allAction.contact.put(id, contactEdit));
   }
 
   const handleDelete = () => {
@@ -37,14 +37,21 @@ export default function Card ({data}) {
     }, 3000)
   }
 
+  if (data.id !== idCard && (detail || display === 'flex')) {
+    setDetail(false);
+    setDisplay('none');
+  }
+
   return (
     <View style={{marginBottom: bottom}}>
 
       <View style={styles.container}>
         <TouchableOpacity style={styles.containerTitle} 
           onPress={() => {
-            console.log('====ggg============')
-            
+            setDetail(!detail);
+            setDisplay(display == "flex" ? "none" : "flex")
+            setBottom(display == "flex" ? 0 : 10)
+            dispatch(allAction.contact.setIdCard(data.id));
           }}
           activeOpacity={1}
         >
@@ -65,6 +72,8 @@ export default function Card ({data}) {
                   setShowAction(false);
                   setDisplay('flex')
                   setBottom(10)
+                  setDetail(false)
+                  dispatch(allAction.contact.setIdCard(data.id));
                 }}
                 style={{marginRight: 20}}
               >
@@ -92,7 +101,22 @@ export default function Card ({data}) {
             </TouchableOpacity>
         }
       </View>
-      <View style={[styles.contentContainer, {maxHeight: 350, marginTop: -50, display}]}>
+      { detail && idCard === data.id
+        ? 
+        <View style={[styles.contentContainer, {maxHeight: 350, marginTop: -50, display}, styles.row]}>
+          <View>
+            <Text style={styles.textBody}>First Name</Text>
+            <Text style={styles.textBody}>Last Name</Text>
+            <Text style={styles.textBody}>Age</Text>
+          </View>
+          <View style={{marginLeft: 20}}>
+            <Text style={styles.textBody}>: {data.firstName}</Text>
+            <Text style={styles.textBody}>: {data.lastName}</Text>
+            <Text style={styles.textBody}>: {data.age}</Text>
+          </View>
+        </View>
+        :
+        <View style={[styles.contentContainer, {maxHeight: 350, marginTop: -50, display}]}>
         {status ? <Text style={{color: status === "Contact edited" ? '#3dbc6d' : "#eb2323"}}>{status}</Text> : <Text></Text>}
         <Text style={styles.textBody}>First Name</Text>
         <TextInput 
@@ -147,6 +171,7 @@ export default function Card ({data}) {
           </TouchableOpacity>
         </View>
       </View>
+      }
     </View>
   )
 }

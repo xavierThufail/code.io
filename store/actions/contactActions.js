@@ -20,6 +20,13 @@ const setStatus = (type, payload) => {
   }
 }
 
+const setIdCard = (id) => {
+  return {
+    type: "SET_ID_CARD",
+    payload: id
+  }
+}
+
 const setLoading = (loading) => {
   return {
     type: "SET_LOADING",
@@ -130,5 +137,6 @@ export default {
   post,
   put,
   del,
-  setStatus
+  setStatus,
+  setIdCard
 }

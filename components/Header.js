@@ -11,7 +11,7 @@ export default function Header ({title}) {
     <View style={styles.container}>
       <View style={{flexDirection: 'row'}}>
         <TouchableOpacity>
-          <Icon name="ios-menu" size={30}/>
+          <Icon name="ios-menu" size={30} focused="transparent"/>
         </TouchableOpacity>
       </View>
 
